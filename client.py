@@ -1,10 +1,10 @@
 import asyncio
 import os
 from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
 
 from tool_agent import MCPToolAgent
 from chat_session import ChatSession
+from llm_factory import LLMFactory, Models
 
 load_dotenv()
 
@@ -19,15 +19,12 @@ async def main():
         tool_names = await mcp_agent.get_tool_names()
         print(f"Available tools: {', '.join(tool_names)}")
         
-        # Initialize LangChain OpenAI client
-        api_key = os.getenv("OPENAI_API_KEY")
-        if not api_key:
-            raise ValueError("OPENAI_API_KEY not found in environment variables")
-            
-        llm = ChatOpenAI(
-            model="gpt-4o",
+        # Use the factory to create an LLM - now with Llama 3.2
+        llm = LLMFactory.create(
+            # model=Models.LLAMA3_2,  # Use Llama 3.2 via Ollama
+            model=Models.GPT4O,  # Use GPT-4 via OpenAI
             temperature=0.7,
-            openai_api_key=api_key
+            streaming=True
         )
         
         # Create and initialize chat session

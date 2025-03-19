@@ -1,6 +1,6 @@
 import json
 from typing import Any, Dict, List, Tuple
-from langchain_core.messages import SystemMessage, BaseMessage
+from langchain_core.messages import SystemMessage, BaseMessage, ToolMessage
 
 from tool_agent import MCPToolAgent
 
@@ -34,20 +34,31 @@ class ToolHandler:
                     tool_request = json.loads(json_str)
                     
                     if "tool_request" in tool_request:
+                        tool_call_id = f"call_{len(messages)}"
+                        
                         if tool_request["tool_request"] == "schema":
                             # Get and return tool schema
                             tool_name = tool_request["tool_name"]
                             try:
                                 schema = await self.mcp_agent.get_tool_schema(tool_name)
-                                system_message = f"Tool schema for {tool_name}: {json.dumps(schema)}"
-                                messages.append(SystemMessage(content=system_message))
-                                print(f"\nSystem: {system_message}")
+                                # Use ToolMessage instead of SystemMessage
+                                tool_message = ToolMessage(
+                                    content=json.dumps(schema),
+                                    tool_call_id=tool_call_id,
+                                    name=tool_name
+                                )
+                                messages.append(tool_message)
+                                print(f"\nTool: Schema for {tool_name}")
                                 # Continue the loop to process the schema
                                 return True, True
                             except Exception as e:
                                 error_message = f"Error getting schema: {str(e)}"
-                                messages.append(SystemMessage(content=error_message))
-                                print(f"\nSystem: {error_message}")
+                                messages.append(ToolMessage(
+                                    content=error_message,
+                                    tool_call_id=tool_call_id,
+                                    name=tool_name
+                                ))
+                                print(f"\nTool Error: {error_message}")
                                 # Continue to get a new response
                                 return True, True
                                 
@@ -58,15 +69,24 @@ class ToolHandler:
                             
                             try:
                                 result = await self.mcp_agent.execute_tool(tool_name, arguments)
-                                system_message = f"Tool execution result: {json.dumps(result)}"
-                                messages.append(SystemMessage(content=system_message))
-                                print(f"\nSystem: {system_message}")
+                                # Use ToolMessage instead of SystemMessage
+                                tool_message = ToolMessage(
+                                    content=json.dumps(result),
+                                    tool_call_id=tool_call_id,
+                                    name=tool_name
+                                )
+                                messages.append(tool_message)
+                                print(f"\nTool: Execution of {tool_name}")
                                 # Continue the loop to process the result
                                 return True, True
                             except Exception as e:
                                 error_message = f"Error executing tool: {str(e)}"
-                                messages.append(SystemMessage(content=error_message))
-                                print(f"\nSystem: {error_message}")
+                                messages.append(ToolMessage(
+                                    content=error_message,
+                                    tool_call_id=tool_call_id,
+                                    name=tool_name
+                                ))
+                                print(f"\nTool Error: {error_message}")
                                 # Continue to get a new response
                                 return True, True
                 except json.JSONDecodeError:
