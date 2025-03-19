@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=42.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mcp-server"
+version = "0.1.0"
+authors = [
+    {name = "Your Name", email = "your.email@example.com"},
+]
+description = "MCP server implementation"
+readme = "README.md"
+requires-python = ">=3.10"   # Updated from >=3.7 to >=3.10
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "fastapi>=0.68.0",
+    "mcp[cli]>=1.4.1",
+    "uvicorn>=0.15.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=6.0",
+    "black>=21.5b2",
+    "isort>=5.9.1",
+    "mypy>=0.812",
+]
+
+[tool.black]
+line-length = 88
+
+[tool.isort]
+profile = "black"
+
+[tool.mypy]
+python_version = "3.10"  # Updated from 3.7 to 3.10
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
