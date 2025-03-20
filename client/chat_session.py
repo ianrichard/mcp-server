@@ -5,14 +5,14 @@ from typing import List, Dict, Any, AsyncGenerator
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage, BaseMessage
 
-from tool_agent import MCPToolAgent
+from tool_client import MCPToolClient
 from tool_handler import ToolHandler
-from prompts import create_system_prompt
+from mcp_adapter_prompt import create_system_prompt
 
 class ChatSession:
     def __init__(
         self, 
-        mcp_agent: MCPToolAgent, 
+        mcp_agent: MCPToolClient, 
         llm: ChatOpenAI,
         tool_names: List[str]
     ):

@@ -5,9 +5,9 @@ from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 from contextlib import AsyncExitStack
 
-class MCPToolAgent:
+class MCPToolClient:
     def __init__(self, server_path: str):
-        """Initialize MCP Tool Agent with path to server script."""
+        """Initialize MCP Tool Client with path to server script."""
         self.server_path = server_path
         self.session = None
         self.tools_cache = {}  # Cache tool schemas after fetching them

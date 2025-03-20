@@ -2,7 +2,7 @@ import asyncio
 import os
 from dotenv import load_dotenv
 
-from tool_agent import MCPToolAgent
+from tool_client import MCPToolClient
 from chat_session import ChatSession
 from llm_factory import LLMFactory
 from llm_provider import LLMProvider
@@ -12,11 +12,10 @@ load_dotenv()
 async def main():
     mcp_agent = None
     try:
-        mcp_agent = MCPToolAgent("server.py")
+        mcp_agent = MCPToolClient("main.py")
         await mcp_agent.connect()
         
         tool_names = await mcp_agent.get_tool_names()
-        print(f"Available tools: {', '.join(tool_names)}")
         
         llm = LLMFactory.create(
             model=LLMProvider.OLLAMA.DEFAULT,

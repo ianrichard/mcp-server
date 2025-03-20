@@ -2,10 +2,10 @@ import json
 from typing import Any, Dict, List, Tuple
 from langchain_core.messages import SystemMessage, BaseMessage, ToolMessage
 
-from tool_agent import MCPToolAgent
+from tool_client import MCPToolClient
 
 class ToolHandler:
-    def __init__(self, mcp_agent: MCPToolAgent):
+    def __init__(self, mcp_agent: MCPToolClient):
         """Initialize a tool handler with an MCP agent."""
         self.mcp_agent = mcp_agent
         
