@@ -2,6 +2,7 @@ import asyncio
 import os
 from dotenv import load_dotenv
 
+# Keep these as relative imports
 from tool_client import MCPToolClient
 from chat_session import ChatSession
 from llm_factory import LLMFactory
@@ -18,9 +19,9 @@ async def main():
         tool_names = await mcp_agent.get_tool_names()
 
         # llm = LLMFactory.ollama()
-        # llm = LLMFactory.openai()
+        llm = LLMFactory.openai()
         # llm = LLMFactory.azure() 
-        llm = LLMFactory.groq()  
+        # llm = LLMFactory.groq()  
 
         # llm = LLMFactory.openai("gpt-4o")
         # llm = LLMFactory.groq("llama-3.3-70b")

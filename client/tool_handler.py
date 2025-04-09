@@ -12,25 +12,29 @@ class ToolHandler:
         
     async def extract_and_process_tool_request(
         self, 
-        assistant_message: str, 
-        messages: List[BaseMessage]
+        text, 
+        messages, 
+        response_handler=None
     ) -> bool:
-        """Extract and process a tool request from an assistant message.
+        """
+        Extract and process tool requests from the given text.
         
         Args:
-            assistant_message: The message from the assistant
-            messages: The current message history
+            text: Text to extract tool requests from
+            messages: Message history to append tool responses to
+            response_handler: Optional handler for API responses
             
         Returns:
-            bool: should_continue (whether to continue processing the conversation)
+            True if a tool was used and the conversation should continue,
+            False otherwise
         """
         try:
             # Try to parse JSON (might be embedded in text)
-            json_start = assistant_message.find('{')
-            json_end = assistant_message.rfind('}') + 1
+            json_start = text.find('{')
+            json_end = text.rfind('}') + 1
             
             if json_start >= 0 and json_end > json_start:
-                json_str = assistant_message[json_start:json_end]
+                json_str = text[json_start:json_end]
                 try:
                     tool_request = json.loads(json_str)
                     
@@ -42,8 +46,12 @@ class ToolHandler:
                                 schema = await self.mcp_agent.get_tool_schema(tool_name)
                                 
                                 # Format and print tool request/response
-                                ConsoleFormatter.format_tool_request(tool_name, {"request_type": "schema"})
-                                ConsoleFormatter.format_tool_response(tool_name, schema)
+                                if response_handler:
+                                    # Use response handler methods
+                                    pass
+                                else:
+                                    ConsoleFormatter.format_tool_request(tool_name, {"request_type": "schema"})
+                                    ConsoleFormatter.format_tool_response(tool_name, schema)
                                 
                                 # Add clear instructions with the schema
                                 schema_message = f"Use the following schema for tool '{tool_name}':\n{json.dumps(schema, indent=2)}"
@@ -55,7 +63,11 @@ class ToolHandler:
                                 return True
                             except Exception as e:
                                 error_message = f"Error getting schema: {str(e)}"
-                                ConsoleFormatter.format_error(error_message)
+                                if response_handler:
+                                    # Use response handler methods
+                                    pass
+                                else:
+                                    ConsoleFormatter.format_error(error_message)
                                 
                                 messages.append(SystemMessage(content=error_message))
                                 # Continue to get a new response
@@ -68,13 +80,21 @@ class ToolHandler:
                             
                             try:
                                 # Format and print tool request
-                                ConsoleFormatter.format_tool_request(tool_name, arguments)
+                                if response_handler:
+                                    # Use response handler methods
+                                    pass
+                                else:
+                                    ConsoleFormatter.format_tool_request(tool_name, arguments)
                                 
                                 # Execute the tool
                                 result = await self.mcp_agent.execute_tool(tool_name, arguments)
                                 
                                 # Format and print tool response
-                                ConsoleFormatter.format_tool_response(tool_name, result)
+                                if response_handler:
+                                    # Use response handler methods
+                                    pass
+                                else:
+                                    ConsoleFormatter.format_tool_response(tool_name, result)
                                 
                                 # Add clear instructions with the result
                                 result_message = f"This is the result of executing '{tool_name}':\n{json.dumps(result, indent=2)}"
@@ -86,7 +106,11 @@ class ToolHandler:
                                 return True
                             except Exception as e:
                                 error_message = f"Error executing tool: {str(e)}"
-                                ConsoleFormatter.format_error(error_message)
+                                if response_handler:
+                                    # Use response handler methods
+                                    pass
+                                else:
+                                    ConsoleFormatter.format_error(error_message)
                                 
                                 messages.append(SystemMessage(content=error_message))
                                 # Continue to get a new response
@@ -99,5 +123,9 @@ class ToolHandler:
             return False
                 
         except Exception as e:
-            ConsoleFormatter.format_error(f"Error in tool request extraction: {e}")
+            if response_handler:
+                # Use response handler methods
+                pass
+            else:
+                ConsoleFormatter.format_error(f"Error in tool request extraction: {e}")
             return False

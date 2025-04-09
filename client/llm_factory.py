@@ -1,10 +1,13 @@
 import os
 import json
 from typing import Optional, Dict, Any, Tuple
-from langchain_openai import ChatOpenAI, AzureChatOpenAI
+
+# Updated imports using the newer package structure
 from langchain_core.language_models.chat_models import BaseChatModel
-from langchain_ollama import ChatOllama
+from langchain_openai import ChatOpenAI, AzureChatOpenAI
+from langchain_community.chat_models import ChatOllama
 from langchain_groq import ChatGroq
+
 from dotenv import load_dotenv
 
 
